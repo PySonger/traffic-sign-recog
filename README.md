@@ -5,7 +5,7 @@ This repo contains these files:
 
 shows an example about how to do multi-label classification with caffe.
 
-- traffic_light_data_multilabel.py
+- data_multilabel.py
 
 shows how to use python layer to feed data to network.
 
