@@ -26,7 +26,7 @@ class AvgMea(object):
         self.right += 1 if pred == label else 0
 
     def cal(self):
-        return self.right / self.total
+        return self.right / float(self.total)
 
 class TestMultiLabel(object):
 
@@ -53,16 +53,22 @@ class TestMultiLabel(object):
         return bgr
 
     def evalution(self,data_file):
+        caffe.set_mode_gpu()
         with open(data_file,'r') as f:
             lines = f.readlines()
         for idx,line in enumerate(lines):
             path,label = line.strip().split('#')
-            label = [int(i) for i in label]
+            label = [int(i) for i in label.split()]
             img = cv2.imread(path)
             self.model.blobs['data'].data[...] = self.transformer.preprocess('data',img)
             output = self.model.forward()
             pred = output['prob'].squeeze()
-            pred = list(np.argmax(pred,axis=1))
+            pred[pred>=0.5] = 1
+            pred[pred<0.5] = 0
+            pred = pred.astype(np.uint8)
+            pred = list(pred)
+            print('pred: ', pred)
+            print('label: ', label)
             self.avgmea.append(pred,label)
         accuracy = self.avgmea.cal()
         print("the accuracy is {}".format(accuracy))
@@ -114,13 +120,14 @@ class TestMultiLabel(object):
         pil_img.save(save_path)
 
 def main():
-    deploy = 'resnet18_deploy.prototxt'
-    caffemodel = 'models/resnet18_multilabel_112x112_0228_iter_3031.caffemodel'
+    deploy = 'deploy.prototxt'
+    caffemodel = 'models/traffic-sign-64x64_iter_30000.caffemodel'
     save_dir = 'test_results'
-    img_dir = 'changtai1118/'
-    anno_dir = 'Annotations/changtai1118'
+    data_file = '/home/song/workspace/datasets/nullmax-traffic-sign/train_data/label.txt'
     test = TestMultiLabel(deploy,caffemodel,save_dir)
+    test.evalution(data_file)
     img_path_list = []
+    '''
     for root,dirs,files in os.walk(img_dir):
         for filename in files:
             img_path = os.path.join(root,filename)
@@ -130,6 +137,7 @@ def main():
         txt_name = dir_list[-1].split('.')[0] + '.txt'
         txt_path = anno_dir + '/' + '/'.join(dir_list[1:-1]) + '/' + txt_name
         test.draw_in_origin_img(txt_path,img_path)
+    '''
     
 
 if __name__ == '__main__':

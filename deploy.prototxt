@@ -3,7 +3,7 @@ layer {
   name: "data"
   type: "Input"
   top: "data"
-  input_param { shape: { dim: 1 dim: 3 dim: 48 dim: 198 } }
+  input_param { shape: { dim: 1 dim: 3 dim: 64 dim: 64 } }
 }
 layer {
 name: "scale_data"
@@ -125,7 +125,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 50
+    num_output: 23
     weight_filler {
       type: "xavier"
     }
@@ -135,22 +135,8 @@ layer {
   }
 }
 layer {
-  name: "reshape"
-  type: "Reshape"
-  bottom: "ip2"
-  top: "reshape"
-  reshape_param {
-    shape {
-	  dim: 0
-	  dim: 10
-	  dim: 1
-	  dim: 5
-	}
-  }
-}
-layer {
   name: "prob"
-  type: "Softmax"
-  bottom: "reshape"
+  type: "Sigmoid"
+  bottom: "ip2"
   top: "prob"
 }

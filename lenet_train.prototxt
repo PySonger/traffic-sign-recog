@@ -9,7 +9,7 @@ layer {
   python_param {
     module: "data_multilabel"
     layer: "TrafficLightDataLayer"
-    param_str: "{\'num_labels\': 2, \'data_file\': \'/home/song/workspace/py_files/caffe-multilabel/data_file.txt\', \'img_size\': (115,115), \'degree\': 5, \'batch_size\': 128, \'crop_size\': (112, 112)}"
+    param_str: "{\'num_labels\':23 , \'data_file\': \'/home/song/workspace/datasets/nullmax-traffic-sign/train_data/label.txt\', \'img_size\': (64,64), \'degree\': 5, \'batch_size\': 64, \'crop_size\': (64, 64)}"
   }
 }
 ######################## network #############
@@ -134,7 +134,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 23
     weight_filler {
       type: "xavier"
     }

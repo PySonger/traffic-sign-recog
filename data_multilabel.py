@@ -134,7 +134,7 @@ class BatchLoader(object):
             self._cur = 0
             random.shuffle(self.data_lines)
 
-        img_path,labels = self.data_lines[self._cur].split('#')
+        img_path,labels = self.data_lines[self._cur].strip().split('#')
         name = os.path.split(img_path)[-1]
         img = cv2.imread(img_path)
         if img is None:
@@ -143,7 +143,7 @@ class BatchLoader(object):
             return None,None
         img = cv2.resize(img,self.img_size)
         img = self.transformer.preprocess(img,degree=self.degree,crop_size=self.crop_size)
-        labels = map(int,labels.split(','))
+        labels = map(int,labels.split(' '))
         label_array = np.array(labels)
         img = np.transpose(img,(2,0,1))
         self._cur += 1
